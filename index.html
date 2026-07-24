@@ -171,25 +171,48 @@ body{
 .category-section{margin-top:17px}
 .category-label{display:flex;align-items:center;gap:10px;margin:0 0 8px;color:#536267;font-size:12px;font-weight:900;letter-spacing:.08em}
 .category-label::before{content:"";width:18px;height:3px;background:var(--yellow)}
-.category-tabs{display:flex;gap:7px;overflow-x:auto;padding:0 0 1px;scrollbar-width:thin}
-.category-tab{
-  flex:0 0 auto;border:1px solid #bdc8ca;border-bottom:0;border-radius:10px 10px 0 0;
-  padding:11px 15px 10px;background:#dce3e3;color:#34464b;cursor:pointer;font-weight:900;
-  box-shadow:inset 0 -3px 0 var(--tab-color,#75878a);transition:.16s ease;
+.category-tabs{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));
+  gap:10px;padding:0 0 12px;
 }
-.category-tab:hover{transform:translateY(-2px);filter:brightness(1.03)}
-.category-tab.active{background:var(--tab-color,#344f57);color:#fff;border-color:var(--tab-color,#344f57);box-shadow:none}
-.category-tab .tab-count{display:inline-grid;place-items:center;min-width:24px;height:20px;margin-left:7px;padding:0 6px;border-radius:99px;background:#ffffff30;font-size:11px}
+.category-tab{
+  min-width:0;min-height:162px;border:3px solid var(--tab-color,#75878a);border-radius:13px;
+  padding:7px;background:#f7f9f8;color:#34464b;cursor:pointer;font-weight:900;
+  box-shadow:0 5px 0 color-mix(in srgb,var(--tab-color,#75878a) 72%,#1a282d),0 8px 18px #27383e20;
+  transition:.16s ease;display:flex;flex-direction:column;align-items:stretch;
+}
+.category-tab:hover{transform:translateY(-2px);filter:brightness(1.02)}
+.category-tab:active{transform:translateY(3px);box-shadow:0 2px 0 var(--tab-color,#75878a)}
+.category-tab.active{background:color-mix(in srgb,var(--tab-color,#344f57) 9%,white);color:#26383e}
+.tab-head{
+  display:block;border-radius:8px;padding:9px 6px;color:#fff;background:var(--tab-color,#344f57);
+  font-size:17px;line-height:1.25;white-space:normal;overflow-wrap:anywhere;
+  box-shadow:inset 0 -3px 0 #00000028,inset 0 0 0 2px #ffffff55;
+}
+.tab-body{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px 5px}
+.category-tab .tab-count{font-size:23px;line-height:1;color:var(--tab-color,#344f57);font-variant-numeric:tabular-nums}
+.tab-caption{margin-top:6px;font-size:11px;color:#69777b}
+.tab-progress{width:82%;height:7px;margin-top:12px;border-radius:99px;background:#dce2e1;overflow:hidden}
+.tab-progress > i{display:block;height:100%;width:var(--pct,0%);background:var(--tab-color,#344f57);transition:width .25s ease}
+.tab-complete{
+  margin-top:8px;padding:5px 14px;border:2px solid #3d7c62;border-radius:4px;color:#317057;
+  font-size:18px;line-height:1;letter-spacing:.12em;transform:rotate(-3deg);background:#edf7f1;
+}
+.category-tab.complete{border-color:#4e806b;background:#edf6f1;--tab-color:#3d7c62!important}
+.category-tab.complete .tab-count,.category-tab.complete .tab-caption,.category-tab.complete .tab-progress{display:none}
+.category-tab.all-tab{--tab-color:#286b82}
+.category-tab.all-tab .tab-body{justify-content:space-evenly}
 th{background:#263b42;color:#f4f7f7;border-bottom:3px solid var(--yellow)}
 td{border-bottom-color:#e2e7e7}tr:hover td{background:#f2f6f5}
 tbody tr{box-shadow:inset 4px 0 0 var(--row-accent,#8a989b)}
 tr.done td{background:#e5f0eb}tr.done{--row-accent:#4b8c72}
 .badge{border:1px solid color-mix(in srgb,var(--row-accent) 38%,#d9e1e1);background:color-mix(in srgb,var(--row-accent) 10%,white);color:#293d43}
 .check{border-radius:6px}.status-badge{border-radius:5px}
-.panel{border-top-left-radius:0;margin-top:0}
+.panel{border-top-left-radius:0;margin-top:0;scroll-margin-top:8px}
+.check:focus-visible{outline:4px solid #e5b73b;outline-offset:3px}
 @media(max-width:900px){
-  .category-tabs{margin-right:-14px}.summary{grid-template-columns:1fr 1fr}
-  .category-tab{padding:10px 12px}.hero{border-bottom-width:4px}
+  .category-tabs{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.summary{grid-template-columns:1fr 1fr}
+  .category-tab{min-height:145px;padding:6px}.tab-head{font-size:15px}.hero{border-bottom-width:4px}
 }
 </style>
 </head>
@@ -231,8 +254,8 @@ tr.done td{background:#e5f0eb}tr.done{--row-accent:#4b8c72}
     <div class="card"><div class="label">合計数量</div><div class="value" id="kpiQty">0</div></div>
   </section>
 
-  <section class="category-section" aria-label="品名カテゴリ">
-    <div class="category-label">品名から分類</div>
+  <section class="category-section" aria-label="品名一覧">
+    <div class="category-label">品名一覧 — 選択すると下に明細を表示</div>
     <div class="category-tabs" id="categoryTabs"></div>
   </section>
 
@@ -247,7 +270,7 @@ tr.done td{background:#e5f0eb}tr.done{--row-accent:#4b8c72}
     </div>
   </section>
 
-  <section class="panel">
+  <section class="panel" id="productPanel" aria-label="選択した品名の商品一覧">
     <div class="table-wrap">
       <table>
         <thead>
@@ -295,13 +318,6 @@ function saveChecks(){localStorage.setItem("dobuChecklistV1",JSON.stringify(chec
 const CATEGORY_COLORS=["#344f57","#2d6f7b","#8a6339","#665a86","#8a4f4f","#49735e","#776343","#5e6877"];
 function categoryName(itemName){
   const name=String(itemName||"").replace(/^ZN[\s　]*/i,"").trim();
-  if(name.includes("耐震架台"))return "耐震架台";
-  if(name.includes("架台"))return "架台";
-  if(name.includes("水切"))return "水切";
-  if(name.includes("被せ"))return "被せ";
-  if(name.includes("平"))return "平";
-  if(name.includes("曲金物"))return "曲金物";
-  if(name.includes("プレート")||name.includes("ﾌﾟﾚｰﾄ"))return "プレート";
   return name||"その他";
 }
 function categoryColor(name){
@@ -310,18 +326,40 @@ function categoryColor(name){
   return CATEGORY_COLORS[(names.indexOf(name)+1)%CATEGORY_COLORS.length];
 }
 function refreshCategoryTabs(){
-  const counts={};
-  allRows.forEach(r=>{const name=categoryName(r[3]);counts[name]=(counts[name]||0)+1});
+  const counts={},doneCounts={};
+  allRows.forEach(r=>{
+    const name=categoryName(r[3]);
+    counts[name]=(counts[name]||0)+1;
+    if(checks[rowKey(r)])doneCounts[name]=(doneCounts[name]||0)+1;
+  });
   const names=Object.keys(counts).sort((a,b)=>a.localeCompare(b,"ja"));
   if(category!=="all"&&!counts[category])category="all";
+  const totalDone=allRows.filter(r=>checks[rowKey(r)]).length;
+  const tabMarkup=(name,label,total,done,index,isAll=false)=>{
+    const complete=total>0&&done===total,pct=total?Math.round(done/total*100):0;
+    return `<button type="button" aria-pressed="${category===name}" class="category-tab ${isAll?"all-tab ":""}${complete?"complete ":""}${category===name?"active":""}" data-category="${esc(name)}" style="--tab-color:${isAll?"#286b82":categoryColor(name)};--pct:${pct}%">
+      <span class="tab-head">${esc(label)}</span>
+      <span class="tab-body">
+        ${complete?`<span class="tab-complete">完了</span>`:`<span class="tab-count">${done} / ${total}件</span><span class="tab-caption">チェック済み</span><span class="tab-progress"><i></i></span>`}
+      </span>
+    </button>`;
+  };
   $("categoryTabs").innerHTML=[
-    `<button class="category-tab ${category==="all"?"active":""}" data-category="all" style="--tab-color:${categoryColor("all")}">すべて<span class="tab-count">${allRows.length}</span></button>`,
-    ...names.map(name=>`<button class="category-tab ${category===name?"active":""}" data-category="${esc(name)}" style="--tab-color:${categoryColor(name)}">${esc(name)}<span class="tab-count">${counts[name]}</span></button>`)
+    tabMarkup("all","全体進捗",allRows.length,totalDone,0,true),
+    ...names.map((name,index)=>tabMarkup(name,name,counts[name],doneCounts[name]||0,index))
   ].join("");
   document.querySelectorAll(".category-tab").forEach(button=>button.addEventListener("click",()=>{
     category=button.dataset.category;
     $("nameFilter").value="";
     refreshCategoryTabs();render();
+    requestAnimationFrame(()=>{
+      $("productPanel").scrollIntoView({
+        behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",
+        block:"start"
+      });
+      const firstCheck=document.querySelector("#tbody .check:not(:checked)")||document.querySelector("#tbody .check");
+      if(firstCheck)firstCheck.focus({preventScroll:true});
+    });
   }));
 }
 function refreshFilters(){
@@ -365,7 +403,7 @@ function render(){
   $("countText").textContent=`${rows.length}件を表示`;
   document.querySelectorAll(".check").forEach(cb=>cb.addEventListener("change",()=>{
     checks[cb.dataset.key]=cb.checked;if(!cb.checked)delete checks[cb.dataset.key];
-    saveChecks();updateProgress();render();
+    saveChecks();updateProgress();refreshCategoryTabs();render();
   }));
 }
 function applyData(rows,msg){allRows=rows;refreshFilters();refreshCategoryTabs();updateProgress();render();$("notice").textContent=msg}
@@ -392,7 +430,7 @@ $("fileInput").addEventListener("change",async e=>{
   }catch(err){alert(err.message)}
 });
 $("reloadBtn").addEventListener("click",loadDefault);
-$("resetBtn").addEventListener("click",()=>{if(confirm("すべてのチェックを解除しますか？")){checks={};saveChecks();updateProgress();render()}});
+$("resetBtn").addEventListener("click",()=>{if(confirm("すべてのチェックを解除しますか？")){checks={};saveChecks();updateProgress();refreshCategoryTabs();render()}});
 ["search","nameFilter","pickupFilter"].forEach(id=>$(id).addEventListener(id==="search"?"input":"change",render));
 document.querySelectorAll(".segment button").forEach(b=>b.addEventListener("click",()=>{
   document.querySelectorAll(".segment button").forEach(x=>x.classList.remove("active"));
