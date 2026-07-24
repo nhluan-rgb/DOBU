@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#263b42">
+<title>溶融亜鉛メッキ 作業チェックリスト</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+:root{
+  --ink:#24303a;--muted:#71808b;--line:#e6ebef;--paper:#fff;
+  --bg:#f7f9fc;--blue:#5b8def;--blue2:#7ba7ff;--green:#36b37e;
+  --orange:#ffab66;--pink:#ff8fab;--purple:#9b8afb;--danger:#e85d75;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;font-family:"Yu Gothic UI","Meiryo",system-ui,sans-serif;
+  color:var(--ink);background:
+  radial-gradient(circle at 8% 0%,#e9f2ff 0 14%,transparent 32%),
+  radial-gradient(circle at 95% 10%,#ffe9f0 0 12%,transparent 30%),
+  var(--bg);
+}
+button,input,select{font:inherit}
+.hero{
+  padding:26px 28px 22px;
+  background:linear-gradient(135deg,#5b8def 0%,#7a8ff7 48%,#9b8afb 100%);
+  color:#fff;border-bottom-left-radius:28px;border-bottom-right-radius:28px;
+  box-shadow:0 12px 30px rgba(91,141,239,.22)
+}
+.hero-row{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:15px}
+.logo{
+  width:60px;height:60px;border-radius:18px;background:#fff;color:#6f7ff0;
+  display:grid;place-items:center;font-size:32px;box-shadow:0 8px 18px #3f58b744
+}
+.hero h1{margin:0;font-size:30px}
+.hero p{margin:5px 0 0;color:#eef3ff}
+.hero-actions{display:flex;gap:9px;flex-wrap:wrap}
+.btn,.file-label{
+  border:0;border-radius:12px;padding:11px 15px;cursor:pointer;font-weight:800;
+  background:#ffffff1f;color:#fff;border:1px solid #ffffff55
+}
+.btn:hover,.file-label:hover{background:#ffffff33}
+.file-label input{display:none}
+.wrap{max-width:1850px;margin:auto;padding:20px 28px 42px}
+.progress-card{
+  margin-top:-6px;background:#fff;border-radius:20px;padding:18px 20px;
+  border:1px solid var(--line);box-shadow:0 8px 25px rgba(57,78,103,.08)
+}
+.progress-top{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap}
+.progress-title{font-weight:900;font-size:18px}
+.progress-number{font-size:26px;font-weight:1000;color:var(--blue)}
+.progress-track{height:18px;background:#edf1f6;border-radius:999px;overflow:hidden;margin-top:12px}
+.progress-fill{
+  height:100%;width:0;border-radius:999px;
+  background:linear-gradient(90deg,var(--blue),var(--purple),var(--pink));
+  transition:width .35s ease
+}
+.summary{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin:16px 0
+}
+.card{
+  background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px 18px;
+  box-shadow:0 5px 16px rgba(43,60,80,.055)
+}
+.card .label{font-size:13px;color:var(--muted);font-weight:800}
+.card .value{font-size:29px;font-weight:1000;margin-top:5px}
+.card:nth-child(1) .value{color:var(--blue)}
+.card:nth-child(2) .value{color:var(--green)}
+.card:nth-child(3) .value{color:var(--pink)}
+.card:nth-child(4) .value{color:var(--orange)}
+.toolbar{
+  background:#fff;border:1px solid var(--line);border-radius:18px;
+  padding:13px;display:flex;gap:9px;align-items:center;flex-wrap:wrap;
+  box-shadow:0 5px 16px rgba(43,60,80,.05)
+}
+.toolbar input,.toolbar select{
+  border:1px solid var(--line);border-radius:12px;padding:11px 13px;background:#fbfcfe
+}
+.toolbar input{flex:1;min-width:260px}
+.segment{display:flex;background:#f0f3f8;border-radius:12px;padding:4px;gap:3px}
+.segment button{
+  border:0;background:transparent;padding:8px 12px;border-radius:9px;
+  cursor:pointer;color:#61717d;font-weight:800
+}
+.segment button.active{background:#fff;color:var(--blue);box-shadow:0 2px 7px #40526618}
+.panel{
+  margin-top:13px;background:#fff;border:1px solid var(--line);border-radius:20px;
+  overflow:hidden;box-shadow:0 7px 20px rgba(43,60,80,.055)
+}
+.table-wrap{overflow:auto;max-height:68vh}
+table{width:100%;border-collapse:collapse;min-width:1500px;white-space:nowrap}
+th{
+  position:sticky;top:0;z-index:2;background:#f6f8fb;color:#62717d;
+  font-size:13px;text-align:left;padding:12px;border-bottom:1px solid var(--line)
+}
+td{padding:12px;border-bottom:1px solid #eef1f4;font-size:14px}
+tr:hover td{background:#fafcff}
+tr.done td{background:#edf9f3;color:#5e7168}
+tr.done .item-name,tr.done .code{text-decoration:line-through;opacity:.72}
+.check-cell{text-align:center;width:66px}
+.check{
+  appearance:none;width:27px;height:27px;border:2px solid #c9d2dc;border-radius:9px;
+  display:inline-grid;place-content:center;cursor:pointer;background:#fff;
+  transition:.2s
+}
+.check:checked{background:var(--green);border-color:var(--green)}
+.check:checked::after{content:"✓";color:#fff;font-size:19px;font-weight:1000}
+.code{font-family:Consolas,ui-monospace,monospace;color:#356f9b;font-weight:800}
+.item-name{font-weight:900}
+.qty{font-size:17px;font-weight:1000;color:#324f69}
+.badge{
+  display:inline-block;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:900;
+  background:#edf3ff;color:#5273b8
+}
+.status-badge{
+  display:inline-block;min-width:66px;text-align:center;padding:5px 9px;border-radius:999px;
+  font-size:12px;font-weight:900;background:#fff1e6;color:#b76a21
+}
+tr.done .status-badge{background:#dff5e9;color:#207a52}
+.diamond td{color:#d74242;font-weight:800}
+.footer{padding:11px 15px;color:var(--muted);font-size:12px;background:#fbfcfd}
+.empty{text-align:center;padding:52px;color:var(--muted)}
+@media(max-width:900px){
+  .hero{padding:20px 16px}.wrap{padding:14px}
+  .summary{grid-template-columns:1fr 1fr}
+  .hero h1{font-size:24px}
+}
+
+/* 溶融亜鉛メッキをイメージした工業用ダークテーマ */
+:root{
+  --ink:#172126;--muted:#65737a;--line:#d8dee0;--paper:#fff;
+  --bg:#edf0ef;--blue:#2e6571;--blue2:#47818d;--green:#397765;
+  --orange:#b6762d;--pink:#984c4c;--purple:#655b82;--danger:#a63f3f;
+  --steel:#27383e;--zinc:#b8c4c5;--yellow:#e5b73b;
+}
+body{
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.72),transparent 34%),
+    repeating-linear-gradient(135deg,rgba(42,59,64,.025) 0 1px,transparent 1px 8px),
+    var(--bg);
+}
+.hero{
+  padding:25px 28px 23px;border-radius:0;
+  background:linear-gradient(110deg,#18262b 0%,#2c444b 58%,#657377 100%);
+  border-bottom:5px solid var(--yellow);
+  box-shadow:0 10px 26px rgba(18,31,35,.22);
+}
+.logo{
+  width:64px;height:64px;border-radius:12px;color:#25363b;
+  background:linear-gradient(145deg,#f3f5f4,#aebbbc);
+  border:1px solid #fff;box-shadow:inset 0 0 0 4px #d7dedf,0 7px 16px #0f171b66;
+}
+.hero h1{font-size:29px;letter-spacing:.04em}.hero p{color:#dce4e5}
+.eyebrow{font-size:11px;font-weight:900;letter-spacing:.18em;color:#f0c94d;margin-bottom:5px}
+.btn,.file-label{border-radius:8px;background:#ffffff14;border-color:#ffffff61}
+.btn:hover,.file-label:hover{background:#ffffff26}
+.wrap{max-width:1920px}
+.progress-card,.card,.toolbar,.panel{border-radius:10px;border-color:#ccd4d5}
+.progress-card{border-top:4px solid #526b71}
+.progress-number{color:var(--blue)}
+.progress-track{height:14px;background:#dde3e3}
+.progress-fill{background:linear-gradient(90deg,#325c66,#6f8d8e,#e0b43b)}
+.summary{grid-template-columns:repeat(4,minmax(0,1fr))}
+.card{position:relative;overflow:hidden;border-left:5px solid #788b8e}
+.card::after{content:"";position:absolute;right:-18px;top:-20px;width:65px;height:65px;border:10px solid #eef1f1;border-radius:50%}
+.toolbar{border-top-left-radius:0;border-top-right-radius:0;margin-top:0}
+.toolbar input,.toolbar select{border-radius:7px;background:#f8faf9}
+.segment{border-radius:8px;background:#e4e9e8}.segment button{border-radius:6px}
+.segment button.active{color:#fff;background:#344f57}
+.category-section{margin-top:17px}
+.category-label{display:flex;align-items:center;gap:10px;margin:0 0 8px;color:#536267;font-size:12px;font-weight:900;letter-spacing:.08em}
+.category-label::before{content:"";width:18px;height:3px;background:var(--yellow)}
+.category-tabs{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));
+  gap:10px;padding:0 0 12px;
+}
+.category-tab{
+  min-width:0;min-height:162px;border:3px solid var(--tab-color,#75878a);border-radius:13px;
+  padding:7px;background:#f7f9f8;color:#34464b;cursor:pointer;font-weight:900;
+  box-shadow:0 5px 0 color-mix(in srgb,var(--tab-color,#75878a) 72%,#1a282d),0 8px 18px #27383e20;
+  transition:.16s ease;display:flex;flex-direction:column;align-items:stretch;
+}
+.category-tab:hover{transform:translateY(-2px);filter:brightness(1.02)}
+.category-tab:active{transform:translateY(3px);box-shadow:0 2px 0 var(--tab-color,#75878a)}
+.category-tab.active{background:color-mix(in srgb,var(--tab-color,#344f57) 9%,white);color:#26383e}
+.tab-head{
+  display:block;border-radius:8px;padding:9px 6px;color:#fff;background:var(--tab-color,#344f57);
+  font-size:17px;line-height:1.25;white-space:normal;overflow-wrap:anywhere;
+  box-shadow:inset 0 -3px 0 #00000028,inset 0 0 0 2px #ffffff55;
+}
+.tab-body{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px 5px}
+.category-tab .tab-count{font-size:23px;line-height:1;color:var(--tab-color,#344f57);font-variant-numeric:tabular-nums}
+.tab-caption{margin-top:6px;font-size:11px;color:#69777b}
+.tab-progress{width:82%;height:7px;margin-top:12px;border-radius:99px;background:#dce2e1;overflow:hidden}
+.tab-progress > i{display:block;height:100%;width:var(--pct,0%);background:var(--tab-color,#344f57);transition:width .25s ease}
+.tab-complete{
+  margin-top:8px;padding:5px 14px;border:2px solid #3d7c62;border-radius:4px;color:#317057;
+  font-size:18px;line-height:1;letter-spacing:.12em;transform:rotate(-3deg);background:#edf7f1;
+}
+.category-tab.complete{border-color:#4e806b;background:#edf6f1;--tab-color:#3d7c62!important}
+.category-tab.complete .tab-count,.category-tab.complete .tab-caption,.category-tab.complete .tab-progress{display:none}
+.category-tab.all-tab{--tab-color:#286b82}
+.category-tab.all-tab .tab-body{justify-content:space-evenly}
+th{background:#263b42;color:#f4f7f7;border-bottom:3px solid var(--yellow)}
+td{border-bottom-color:#e2e7e7}tr:hover td{background:#f2f6f5}
+tbody tr{box-shadow:inset 4px 0 0 var(--row-accent,#8a989b)}
+tr.done td{background:#e5f0eb}tr.done{--row-accent:#4b8c72}
+.badge{border:1px solid color-mix(in srgb,var(--row-accent) 38%,#d9e1e1);background:color-mix(in srgb,var(--row-accent) 10%,white);color:#293d43}
+.check{border-radius:6px}.status-badge{border-radius:5px}
+.panel{border-top-left-radius:0;margin-top:0;scroll-margin-top:8px}
+.check:focus-visible{outline:4px solid #e5b73b;outline-offset:3px}
+@media(max-width:900px){
+  .category-tabs{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.summary{grid-template-columns:1fr 1fr}
+  .category-tab{min-height:145px;padding:6px}.tab-head{font-size:15px}.hero{border-bottom-width:4px}
+}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="hero-row">
+    <div class="brand">
+      <div class="logo">✓</div>
+      <div>
+        <div class="eyebrow">HOT-DIP GALVANIZING / PRODUCTION CONTROL</div>
+        <h1>溶融亜鉛メッキ 作業チェックリスト</h1>
+        <p>品名別に整理し、工程の進捗を確実に管理します</p>
+      </div>
+    </div>
+    <div class="hero-actions">
+      <label class="file-label">Excelを選択<input id="fileInput" type="file" accept=".xlsx,.xlsm,.xls"></label>
+      <button class="btn" id="reloadBtn">再読込</button>
+      <button class="btn" id="resetBtn">チェック解除</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="progress-card">
+    <div class="progress-top">
+      <div>
+        <div class="progress-title">今日の進み具合</div>
+        <div id="notice" style="margin-top:5px;color:var(--muted)">一覧データを読み込みました。</div>
+      </div>
+      <div class="progress-number"><span id="doneCount">0</span> / <span id="totalCount">0</span> 完了</div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </section>
+
+  <section class="summary">
+    <div class="card"><div class="label">案件数</div><div class="value" id="kpiJobs">0</div></div>
+    <div class="card"><div class="label">完了</div><div class="value" id="kpiDone">0</div></div>
+    <div class="card"><div class="label">未完了</div><div class="value" id="kpiOpen">0</div></div>
+    <div class="card"><div class="label">合計数量</div><div class="value" id="kpiQty">0</div></div>
+  </section>
+
+  <section class="category-section" aria-label="品名一覧">
+    <div class="category-label">品名一覧 — 選択すると下に明細を表示</div>
+    <div class="category-tabs" id="categoryTabs"></div>
+  </section>
+
+  <section class="toolbar">
+    <input id="search" placeholder="製造指示番号・品番・品名・規格を検索">
+    <select id="nameFilter"><option value="">すべての品名</option></select>
+    <select id="pickupFilter"><option value="">すべての引取り日</option></select>
+    <div class="segment">
+      <button data-mode="all" class="active">全部</button>
+      <button data-mode="open">未完了</button>
+      <button data-mode="done">完了</button>
+    </div>
+  </section>
+
+  <section class="panel" id="productPanel" aria-label="選択した品名の商品一覧">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th class="check-cell">確認</th><th>状態</th><th>製造指示番号</th><th>品番</th><th>品名</th>
+            <th>厚さ</th><th>縦</th><th>横</th><th>高さ</th><th>規格</th><th>数量</th>
+            <th>持ち込み日</th><th>引取り日</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+      <div id="empty" class="empty" hidden>該当データがありません。</div>
+    </div>
+    <div class="footer"><span id="countText"></span></div>
+  </section>
+</main>
+
+<script>
+const EMBEDDED_ROWS = [[1, "山陰ﾊﾟﾅｿﾆｯｸ　益田★", "ZP5050X2", "ZN PB 水切", 2.3, 500, 500, 500, "HDZT56", 1, "2026/07/27", "2026/07/29"], [2, "東芝電材　中津★", "ZE4030X2", "ZN PB 水切", 2.3, 400, 400, 300, "ｱｰｽ", 5, "2026/07/27", "2026/07/29"], [3, "正和電材　佐世保★", "ZE2020X2", "ZN PB 水切", 2.3, 200, 200, 200, "ｱｰｽ", 3, "2026/07/27", "2026/07/29"], [4, "カンサイ　南★", "ZP4040X2", "ZN PB 水切", 2.3, 400, 400, 400, "座無しｼｰﾙ付", 1, "2026/07/27", "2026/07/29"], [5, "正和電材　佐世保★", "ZE0000X", "ZN PBﾄｸ 水切", 2.3, 200, 200, 300, "ｱｰｽ側面", 2, "2026/07/27", "2026/07/29"], [6, "三親電材　米子★", "ZE0000X", "ZN PBﾄｸ 水切", 2.3, 400, 400, 450, "HDZT56 ｱｰｽ ｶｯﾌﾟﾘﾝｸﾞ･ｺﾝ柱取付金具x2付", 1, "2026/07/27", "2026/07/29"], [7, "田中商事　熊本", "ZP0000W", "ZN PBﾄｸ 被せ", 3.2, 900, 600, 250, "◆", 1, "2026/07/27", "2026/07/30"], [8, "巴電業　広島★", "ZP0000W", "ZN PBﾄｸ 被せ", 2.3, 200, 150, 130, "ﾊﾟｯｷﾝ無し　底面ｾﾝﾀｰφ20　2-φ10", 5, "2026/07/27", "2026/07/29"], [9, "巴電業　広島★", "ZP0000W", "ZN PBﾄｸ 被せ", 2.3, 400, 150, 130, "ﾊﾟｯｷﾝ無し　底面ｾﾝﾀｰφ20　2-φ10", 4, "2026/07/27", "2026/07/29"], [10, "三和電気商会★", "ZE0000S", "ZN PBﾄｸ 平", 3.2, 900, 300, 350, "◆　側面ｱｰｽ 蓋2分割･FB補強", 1, "2026/07/27", "2026/07/30"], [11, "かごしま電工　奄美★", "ZATR500", "ZN ｱﾝｸﾞﾙ引き込み架台", 0, 500, 500, 500, "HDZT77  L6x50 三角支え付ﾀｲﾌﾟ", 1, "2026/07/27", "2026/07/29"], [12, "かごしま電工　奄美★", "ZATR350", "ZN ｱﾝｸﾞﾙ引き込み架台", 0, 350, 350, 350, "HDZT77  L6x50 三角支え付ﾀｲﾌﾟ", 1, "2026/07/27", "2026/07/29"], [14, "ｹｲ･ｴｽ･ﾃﾞｰ　大分★", "ZIP0000", "ZN ﾌﾟﾚｰﾄ", 6, 100, 2000, 0, "ﾌﾗｯﾄﾊﾞｰ　6x100　φ8x2吊穴可", 1, "2026/07/27", "2026/07/29"], [15, "誠新産業　長崎★", "ZG0000", "ZN 架台", 6, 2400, 300, 0, "穴加工　L50x50x6t　　(L)(R)1セット", 2, "2026/07/27", "2026/07/29"], [16, "Q-mast　電気グル－プ★", "ZG0000", "ZN 架台", 0, 410, 210, 210, "L50x50x6 L65x65x6 床用架台", 2, "2026/07/27", "2026/07/29"], [17, "Q-mast　電気グル－プ★", "ZG0000", "ZN 架台", 0, 530, 250, 250, "L65x65x6 L75x75x6 床用架台", 2, "2026/07/27", "2026/07/29"], [18, "イシグロ　沖縄", "ZG0000", "ZN 架台", 6, 1600, 1150, 65, "HDZT77 /　L-65x65x6t 取付穴", 8, "2026/07/27", "2026/07/29"], [19, "カンサイ　八幡★", "ZG0000", "ZN 架台", 6, 700, 350, 350, "HDZT77  L-50x50x6t 三角支え付　左　7-φ12", 4, "2026/07/27", "2026/07/29"], [20, "カンサイ　八幡★", "ZG0000", "ZN 架台", 6, 700, 350, 50, "HDZT77  L-50x50x6t 三角　左　5-φ12", 5, "2026/07/27", "2026/07/29"], [21, "カンサイ　八幡★", "ZG0000", "ZN 架台", 6, 700, 350, 350, "HDZT77  L-50x50x6t 三角支え付　右　7-φ12", 4, "2026/07/27", "2026/07/29"], [22, "かごしま電工　国分★", "ZG0000", "ZN 架台", 0, 800, 800, 0, "[-5x50x100 [-6.5x75x150 PL6.0t 穴加工", 1, "2026/07/27", "2026/07/29"], [23, "大洋電材　本社★", "ZG0000", "ZN 架台", 0, 380, 230, 0, "L-40x40x3t　D1（M10ねじ止め）", 2, "2026/07/27", "2026/07/29"], [24, "大洋電材　本社★", "ZG0000", "ZN 架台", 0, 400, 230, 0, "L-40x40x3t　D1（M10ねじ止め）", 1, "2026/07/27", "2026/07/29"], [25, "大洋電材　本社★", "ZG0000", "ZN 架台", 0, 150, 180, 0, "L-40x40x3t　D1（M10ねじ止め）", 5, "2026/07/27", "2026/07/29"], [26, "大洋電材　本社★", "ZG0000", "ZN 架台", 0, 250, 230, 0, "L-40x40x3t　D1（M10ねじ止め）", 1, "2026/07/27", "2026/07/29"], [27, "カンサイ　八幡★", "ZMK0000", "ZN 曲金物", 6, 500, 50, 50, "HDZT77  ｺ形 SS6t 2-φ15", 1, "2026/07/27", "2026/07/29"], [28, "Q-mast　空調管グル－プ★", "ZTG0000", "ZN 耐震架台", 0, 450, 1221, 0, "L65x65x6  精錬棟1階 消火配管 19", 1, "2026/07/27", "2026/07/29"], [29, "Q-mast　空調管グル－プ★", "ZTG0000", "ZN 耐震架台", 0, 276, 711, 0, "L50x50x4  精錬棟1階 消火配管 21", 1, "2026/07/27", "2026/07/29"], [30, "Q-mast　空調管グル－プ★", "ZTG0000", "ZN 耐震架台", 0, 365, 1165, 0, "L50x50x4  精錬棟1階 消火配管 10", 1, "2026/07/27", "2026/07/29"], [31, "Q-mast　空調管グル－プ★", "ZTG0000", "ZN 耐震架台", 0, 416, 745, 0, "L50x50x4  精錬棟1階 消火配管 11", 1, "2026/07/27", "2026/07/29"], [32, "Q-mast　空調管グル－プ★", "ZTG0000", "ZN 耐震架台", 0, 416, 775, 0, "L50x50x4  精錬棟1階 消火配管 15", 4, "2026/07/27", "2026/07/29"], [33, "Q-mast　空調管グル－プ★", "ZTG0000", "ZN 耐震架台", 0, 450, 1297, 0, "L65x65x6  精錬棟1階 消火配管 16", 1, "2026/07/27", "2026/07/29"], [34, "Q-mast　空調管グル－プ★", "ZTG0000", "ZN 耐震架台", 0, 416, 900, 0, "L50x50x4  精錬棟1階 消火配管 17", 1, "2026/07/27", "2026/07/29"], [35, "Q-mast　空調管グル－プ★", "ZTG0000", "ZN 耐震架台", 0, 416, 700, 0, "L50x50x4  精錬棟1階 消火配管 18", 2, "2026/07/27", "2026/07/29"], [36, "Q-mast　空調管グル－プ★", "ZTG0000", "ZN 耐震架台", 0, 277, 878, 0, "L50x50x4  精錬棟1階 消火配管 25", 1, "2026/07/27", "2026/07/29"], [37, "Q-mast　空調管グル－プ★", "ZTG0000", "ZN 耐震架台", 0, 276, 1130, 0, "L50x50x4  精錬棟1階 消火配管 24", 1, "2026/07/27", "2026/07/29"], [38, "Q-mast　空調管グル－プ★", "ZTG0000", "ZN 耐震架台", 0, 276, 830, 0, "L50x50x4  精錬棟1階 消火配管 20", 1, "2026/07/27", "2026/07/29"], [39, "Q-mast　空調管グル－プ★", "ZTG0000", "ZN 耐震架台", 0, 365, 685, 0, "L50x50x4  精錬棟1階 消火配管 8", 1, "2026/07/27", "2026/07/29"], [40, "Q-mast　空調管グル－プ★", "ZTG0000", "ZN 耐震架台", 0, 1357, 710, 0, "L50x50x4  精錬棟1階 ｽﾌﾟﾘﾝｸﾗｰ管 4", 1, "2026/07/27", "2026/07/29"], [41, "Q-mast　空調管グル－プ★", "ZTG0000", "ZN 耐震架台", 0, 1357, 710, 0, "L50x50x4  精錬棟1階 ｽﾌﾟﾘﾝｸﾗｰ管 3", 3, "2026/07/27", "2026/07/29"], [42, "Q-mast　空調管グル－プ★", "ZTG0000", "ZN 耐震架台", 0, 449, 905, 0, "[100x50x5  精錬棟1階 ｽﾌﾟﾘﾝｸﾗｰ管 27", 3, "2026/07/27", "2026/07/29"], [43, "Q-mast　空調管グル－プ★", "ZTG0000", "ZN 耐震架台", 0, 340, 630, 0, "L50x50x4  精錬棟1階 ｽﾌﾟﾘﾝｸﾗｰ管 19", 2, "2026/07/27", "2026/07/29"], [44, "Q-mast　空調管グル－プ★", "ZTG0000", "ZN 耐震架台", 0, 392, 710, 0, "L50x50x4  精錬棟1階 ｽﾌﾟﾘﾝｸﾗｰ管 12", 2, "2026/07/27", "2026/07/29"], [45, "Q-mast　空調管グル－プ★", "ZTG0000", "ZN 耐震架台", 0, 1630, 1359, 0, "L50x50x6  消火配管 1", 1, "2026/07/27", "2026/07/29"]];
+const EMBEDDED_MANUFACTURING_NUMBERS=["26-J0090569-001-771","26-J0090838-001-771","26-J0091901-001-771","26-J0092083-001-771","26-J0091901-002-771","26-J0088502-001-771","26-J0087439-001-771","26-J0084925-002-771","26-J0084925-004-771","26-J0089006-001-771","26-J0089149-002-771","26-J0089149-001-771","26-J0091768-001-771","26-J0090669-001-771","26-J0092971-002-771","26-J0092971-001-771","26-J0080148-007-771","26-J0090794-003-771","26-J0090794-004-771","26-J0090794-002-771","26-J0084222-001-771","26-J0088067-008-771","26-J0088067-007-771","26-J0088067-010-771","26-J0088067-009-771","26-J0090794-001-771","26-J0088683-001-771","26-J0088683-010-771","26-J0088683-003-771","26-J0088683-004-771","26-J0088683-005-771","26-J0088683-006-771","26-J0088683-007-771","26-J0088683-008-771","26-J0088683-012-771","26-J0088683-011-771","26-J0088683-009-771","26-J0088683-002-771","26-J0088724-013-771","26-J0088724-007-771","26-J0088724-016-771","26-J0088724-015-771","26-J0088724-014-771","26-J0090979-001-771"];
+EMBEDDED_ROWS.forEach((row,index)=>row[12]=EMBEDDED_MANUFACTURING_NUMBERS[index]||"");
+let allRows = EMBEDDED_ROWS;
+let mode = "all";
+let category = "all";
+let checks = JSON.parse(localStorage.getItem("dobuChecklistV1") || "{}");
+
+const $ = id => document.getElementById(id);
+const esc = v => String(v ?? "").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+const rowKey = r => [r[0],r[2],r[3],r[10],r[11]].join("|");
+
+function excelDate(v){
+  if(v instanceof Date) return `${v.getFullYear()}/${String(v.getMonth()+1).padStart(2,"0")}/${String(v.getDate()).padStart(2,"0")}`;
+  if(typeof v==="number" && v>20000){
+    const d=new Date(Date.UTC(1899,11,30)+v*86400000);
+    return `${d.getUTCFullYear()}/${String(d.getUTCMonth()+1).padStart(2,"0")}/${String(d.getUTCDate()).padStart(2,"0")}`;
+  }
+  return v??"";
+}
+function normalizeRows(data){
+  if(!data||data.length<2)return[];
+  return data.slice(1).filter(r=>typeof r[0]==="number"&&Number.isFinite(r[0])).map(r=>{
+    const x=Array.from({length:12},(_,i)=>r[i]??"");
+    x[10]=excelDate(x[10]);x[11]=excelDate(x[11]);return x;
+  });
+}
+const keyPart=v=>String(v??"").trim();
+function attachManufacturingNumbers(rows,resultData){
+  if(!resultData||resultData.length<2)return rows;
+  const headers=resultData[0].map(keyPart);
+  const col=name=>headers.indexOf(name);
+  const indices={
+    customer:col("得意先"),code:col("品番"),name:col("品名"),thickness:col("ｻｲｽﾞ(厚さ)"),
+    vertical:col("ｻｲｽﾞ(縦)"),horizontal:col("ｻｲｽﾞ(横)"),height:col("ｻｲｽﾞ(高さ)"),
+    spec:col("規格"),qty:col("数量"),manufacturing:col("製造指示番号")
+  };
+  if(Object.values(indices).some(index=>index<0))return rows;
+  const makeKey=values=>values.map(keyPart).join("|");
+  const queues=new Map();
+  resultData.slice(1).forEach(resultRow=>{
+    const key=makeKey([
+      resultRow[indices.customer],resultRow[indices.code],resultRow[indices.name],
+      resultRow[indices.thickness],resultRow[indices.vertical],resultRow[indices.horizontal],
+      resultRow[indices.height],resultRow[indices.spec],resultRow[indices.qty]
+    ]);
+    if(!queues.has(key))queues.set(key,[]);
+    queues.get(key).push(keyPart(resultRow[indices.manufacturing]));
+  });
+  rows.forEach(row=>{
+    const key=makeKey([row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9]]);
+    const matches=queues.get(key);
+    row[12]=matches?.length?matches.shift():"";
+  });
+  return rows;
+}
+function saveChecks(){localStorage.setItem("dobuChecklistV1",JSON.stringify(checks))}
+const CATEGORY_COLORS=["#344f57","#2d6f7b","#8a6339","#665a86","#8a4f4f","#49735e","#776343","#5e6877"];
+function categoryName(itemName){
+  const name=String(itemName||"").replace(/^ZN[\s　]*/i,"").trim();
+  return name||"その他";
+}
+function categoryColor(name){
+  if(name==="all")return CATEGORY_COLORS[0];
+  const names=[...new Set(allRows.map(r=>categoryName(r[3])))].sort((a,b)=>a.localeCompare(b,"ja"));
+  return CATEGORY_COLORS[(names.indexOf(name)+1)%CATEGORY_COLORS.length];
+}
+function refreshCategoryTabs(){
+  const counts={},doneCounts={};
+  allRows.forEach(r=>{
+    const name=categoryName(r[3]);
+    counts[name]=(counts[name]||0)+1;
+    if(checks[rowKey(r)])doneCounts[name]=(doneCounts[name]||0)+1;
+  });
+  const names=Object.keys(counts).sort((a,b)=>a.localeCompare(b,"ja"));
+  if(category!=="all"&&!counts[category])category="all";
+  const totalDone=allRows.filter(r=>checks[rowKey(r)]).length;
+  const tabMarkup=(name,label,total,done,index,isAll=false)=>{
+    const complete=total>0&&done===total,pct=total?Math.round(done/total*100):0;
+    return `<button type="button" aria-pressed="${category===name}" class="category-tab ${isAll?"all-tab ":""}${complete?"complete ":""}${category===name?"active":""}" data-category="${esc(name)}" style="--tab-color:${isAll?"#286b82":categoryColor(name)};--pct:${pct}%">
+      <span class="tab-head">${esc(label)}</span>
+      <span class="tab-body">
+        ${complete?`<span class="tab-complete">完了</span>`:`<span class="tab-count">${done} / ${total}件</span><span class="tab-caption">チェック済み</span><span class="tab-progress"><i></i></span>`}
+      </span>
+    </button>`;
+  };
+  $("categoryTabs").innerHTML=[
+    tabMarkup("all","全体進捗",allRows.length,totalDone,0,true),
+    ...names.map((name,index)=>tabMarkup(name,name,counts[name],doneCounts[name]||0,index))
+  ].join("");
+  document.querySelectorAll(".category-tab").forEach(button=>button.addEventListener("click",()=>{
+    category=button.dataset.category;
+    $("nameFilter").value="";
+    refreshCategoryTabs();render();
+    requestAnimationFrame(()=>{
+      $("productPanel").scrollIntoView({
+        behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",
+        block:"start"
+      });
+      const firstCheck=document.querySelector("#tbody .check:not(:checked)")||document.querySelector("#tbody .check");
+      if(firstCheck)firstCheck.focus({preventScroll:true});
+    });
+  }));
+}
+function refreshFilters(){
+  const names=[...new Set(allRows.map(r=>String(r[3]||"")).filter(Boolean))].sort();
+  const dates=[...new Set(allRows.map(r=>String(r[11]||"")).filter(Boolean))].sort();
+  $("nameFilter").innerHTML='<option value="">すべての品名</option>'+names.map(x=>`<option>${esc(x)}</option>`).join("");
+  $("pickupFilter").innerHTML='<option value="">すべての引取り日</option>'+dates.map(x=>`<option>${esc(x)}</option>`).join("");
+}
+function updateProgress(){
+  const total=allRows.length;
+  const done=allRows.filter(r=>checks[rowKey(r)]).length;
+  const pct=total?Math.round(done/total*100):0;
+  $("doneCount").textContent=done;$("totalCount").textContent=total;
+  $("progressFill").style.width=pct+"%";
+  $("kpiJobs").textContent=total.toLocaleString();
+  $("kpiDone").textContent=done.toLocaleString();
+  $("kpiOpen").textContent=(total-done).toLocaleString();
+  $("kpiQty").textContent=allRows.reduce((s,r)=>s+(Number(r[9])||0),0).toLocaleString();
+}
+function render(){
+  const q=$("search").value.trim().toLowerCase(),nf=$("nameFilter").value,pf=$("pickupFilter").value;
+  const rows=allRows.filter(r=>{
+    const done=!!checks[rowKey(r)];
+    const hay=[r[12],r[2],r[3],r[8]].join(" ").toLowerCase();
+    return (!q||hay.includes(q))&&(!nf||r[3]===nf)&&(!pf||r[11]===pf)&&
+      (category==="all"||categoryName(r[3])===category)&&
+      (mode==="all"||(mode==="done"&&done)||(mode==="open"&&!done));
+  });
+  $("tbody").innerHTML=rows.map(r=>{
+    const key=rowKey(r),done=!!checks[key],diamond=String(r[8]||"").trim().startsWith("◆");
+    return `<tr class="${done?"done ":""}${diamond?"diamond":""}" style="--row-accent:${categoryColor(categoryName(r[3]))}">
+      <td class="check-cell"><input class="check" type="checkbox" data-key="${esc(key)}" ${done?"checked":""}></td>
+      <td><span class="status-badge">${done?"完了":"未完了"}</span></td>
+      <td class="code">${esc(r[12]||"—")}</td><td class="code">${esc(r[2])}</td>
+      <td class="item-name"><span class="badge">${esc(r[3])}</span></td>
+      <td>${esc(r[4])}</td><td>${esc(r[5])}</td><td>${esc(r[6])}</td><td>${esc(r[7])}</td>
+      <td>${esc(r[8])}</td><td class="qty">${esc(r[9])}</td><td>${esc(r[10])}</td><td>${esc(r[11])}</td>
+    </tr>`;
+  }).join("");
+  $("empty").hidden=rows.length>0;
+  $("countText").textContent=`${rows.length}件を表示`;
+  document.querySelectorAll(".check").forEach(cb=>cb.addEventListener("change",()=>{
+    checks[cb.dataset.key]=cb.checked;if(!cb.checked)delete checks[cb.dataset.key];
+    saveChecks();updateProgress();refreshCategoryTabs();render();
+  }));
+}
+function applyData(rows,msg){allRows=rows;refreshFilters();refreshCategoryTabs();updateProgress();render();$("notice").textContent=msg}
+async function loadDefault(){
+  try{
+    const res=await fetch("./ドブ表.xlsm?ts="+Date.now(),{cache:"no-store"});
+    if(!res.ok)throw new Error("HTTP "+res.status);
+    const buf=await res.arrayBuffer(),wb=XLSX.read(buf,{type:"array"});
+    const ws=wb.Sheets["一覧"];if(!ws)throw new Error("「一覧」シートがありません");
+    const resultWs=wb.Sheets["結果"];if(!resultWs)throw new Error("「結果」シートがありません");
+    const resultData=XLSX.utils.sheet_to_json(resultWs,{header:1,defval:"",raw:true});
+    const rows=attachManufacturingNumbers(normalizeRows(XLSX.utils.sheet_to_json(ws,{header:1,defval:"",raw:true})),resultData);
+    if(!rows.length)throw new Error("一覧に明細がありません");
+    applyData(rows,`ドブ表.xlsm の「一覧」から ${rows.length}件を読み込みました。`);
+  }catch(e){
+    applyData(EMBEDDED_ROWS,`埋め込み済みの「一覧」データ ${EMBEDDED_ROWS.length}件を表示しています。`);
+  }
+}
+$("fileInput").addEventListener("change",async e=>{
+  const file=e.target.files[0];if(!file)return;
+  try{
+    const buf=await file.arrayBuffer(),wb=XLSX.read(buf,{type:"array"});
+    const ws=wb.Sheets["一覧"];if(!ws)throw new Error("「一覧」シートがありません");
+    const resultWs=wb.Sheets["結果"];if(!resultWs)throw new Error("「結果」シートがありません");
+    const resultData=XLSX.utils.sheet_to_json(resultWs,{header:1,defval:"",raw:true});
+    const rows=attachManufacturingNumbers(normalizeRows(XLSX.utils.sheet_to_json(ws,{header:1,defval:"",raw:true})),resultData);
+    applyData(rows,`${file.name} の「一覧」から ${rows.length}件を読み込みました。`);
+  }catch(err){alert(err.message)}
+});
+$("reloadBtn").addEventListener("click",loadDefault);
+$("resetBtn").addEventListener("click",()=>{if(confirm("すべてのチェックを解除しますか？")){checks={};saveChecks();updateProgress();refreshCategoryTabs();render()}});
+["search","nameFilter","pickupFilter"].forEach(id=>$(id).addEventListener(id==="search"?"input":"change",render));
+document.querySelectorAll(".segment button").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll(".segment button").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");mode=b.dataset.mode;render();
+}));
+loadDefault();
+</script>
+</body>
+</html>
